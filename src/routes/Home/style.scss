@@ -1,0 +1,61 @@
+@import "./../../assets/scss/mixins.scss";
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  tr {
+    border-bottom: 1px solid #f9e6ff;
+    td {
+      border-left: 1px solid #f9e6ff;
+      &:first-child {
+        border-right: 1px solid #f9e6ff;
+      }
+      > div {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        @include textOverflow(100%);
+      }
+    }
+  }
+  thead {
+    th {
+      > div {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        min-width: 100px;
+        .order-markers {
+          display: flex;
+          align-items: flex-start;
+          justify-content: flex-start;
+          flex-direction: column;
+          margin-right: 10px;
+          .top {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid black;
+            margin-bottom: 5px;
+            &.active {
+              border-bottom-color: red;
+            }
+          }
+          .bottom {
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid black;
+            &.active {
+              border-top-color: red;
+            }
+          }
+        }
+      }
+    }
+  }
+}
