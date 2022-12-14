@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-// import { Link, useSearchParams } from "react-router-dom";
 import { GetAllProducts } from "../../api/product.api";
 import Pagination from "../../components/Pagination";
 import { Product } from "../../types/product.type";
@@ -17,22 +16,60 @@ const Home: FC = () => {
     key: "id",
     direction: "asc",
   });
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemPerPage, setItemPerPage] = useState(10);
+  const [itemPerPage, setItemPerPage] = useState(12);
   const [totalPages, setTotalPages] = useState<number | null>(null);
 
-  const getAllProducts = async (currentPage: number, itemPerPage: number) => {
+  const handleGetAllProducts = async (
+    currentPage: number,
+    itemPerPage: number
+  ) => {
     try {
       const result = await GetAllProducts(
         itemPerPage * (currentPage - 1),
         itemPerPage
       );
       if (result.status === 200) {
-        setProducts(result.data.products);
+        handleSortProducts(result.data.products);
         setTotalPages(Math.ceil(result.data.total / itemPerPage));
       }
     } catch (error) {}
+  };
+  const handleSortProducts = (products: Product[]) => {
+    const _products: Product[] = Array.from(products);
+
+    _products.sort(function (a: Product, b: Product) {
+      if (sortState.direction === "desc") {
+        if (a[sortState.key] < b[sortState.key]) return -1;
+        if (a[sortState.key] > b[sortState.key]) return 1;
+      } else {
+        if (a[sortState.key] < b[sortState.key]) return 1;
+        if (a[sortState.key] > b[sortState.key]) return -1;
+      }
+      return 0;
+    });
+
+    setProducts(_products);
+  };
+  const handleUpdateSortState = (key: keyof Product) => {
+    if (key === sortState.key) {
+      setSortState({
+        key: key,
+        direction: sortState.direction === "asc" ? "desc" : "asc",
+      });
+    } else {
+      setSortState({
+        key: key,
+        direction: "asc",
+      });
+    }
+  };
+  const handleUpdateItemPerPage = (value: number) => {
+    const params = new URLSearchParams();
+    params.append("pageId", currentPage.toString());
+    params.append("itemPerPage", value.toString());
+    setSearchParams(params);
   };
 
   useEffect(() => {
@@ -51,44 +88,28 @@ const Home: FC = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    getAllProducts(currentPage, itemPerPage);
+    handleGetAllProducts(currentPage, itemPerPage);
+    // eslint-disable-next-line
   }, [currentPage, itemPerPage]);
 
   useEffect(() => {
-    const _products: Product[] = Array.from(products);
-
-    _products.sort(function (a: Product, b: Product) {
-      if (sortState.direction === "desc") {
-        if (a[sortState.key] < b[sortState.key]) return -1;
-        if (a[sortState.key] > b[sortState.key]) return 1;
-      } else {
-        if (a[sortState.key] < b[sortState.key]) return 1;
-        if (a[sortState.key] > b[sortState.key]) return -1;
-      }
-      return 0;
-    });
-
-    setProducts(_products);
+    handleSortProducts(products);
     // eslint-disable-next-line
   }, [sortState]);
-
-  const handleUpdateSortState = (key: keyof Product) => {
-    if (key === sortState.key) {
-      setSortState({
-        key: key,
-        direction: sortState.direction === "asc" ? "desc" : "asc",
-      });
-    } else {
-      setSortState({
-        key: key,
-        direction: "asc",
-      });
-    }
-  };
 
   return (
     <div className="home-page">
       <div className="container">
+        <select
+          value={itemPerPage}
+          onChange={(e) => {
+            handleUpdateItemPerPage(parseInt(e.target.value));
+          }}
+        >
+          <option value="5">5</option>
+          <option value="12">12</option>
+          <option value="30">30</option>
+        </select>
         <Pagination currentPage={currentPage} pagesCount={totalPages} />
         <table className="table">
           <thead>

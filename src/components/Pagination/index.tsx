@@ -1,3 +1,4 @@
+import React from "react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
@@ -10,9 +11,13 @@ const Pagination: FC<PaginationProps> = (props) => {
   return (
     <div className="pagination">
       <Link to={`?pageId=${props.currentPage + 1}`}>next</Link>
-      <Link to={`?pageId=${props.currentPage - 1}`}>prev</Link>
+      {props.currentPage > 1 ? (
+        <Link to={`?pageId=${props.currentPage - 1}`}>prev</Link>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
 
-export default Pagination;
+export default React.memo(Pagination);
