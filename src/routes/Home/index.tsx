@@ -1,8 +1,9 @@
 import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { GetAllProducts } from "../../api/product.api";
-import Pagination from "../../components/Pagination";
+import { DeleteProduct, GetAllProducts } from "../../api/product.api";
+import { toast } from "react-toastify";
 import { Product } from "../../types/product.type";
+import Pagination from "../../components/Pagination";
 import "./style.scss";
 
 type SortStateType = {
@@ -70,6 +71,30 @@ const Home: FC = () => {
     params.append("pageId", currentPage.toString());
     params.append("itemPerPage", value.toString());
     setSearchParams(params);
+  };
+  const handleDeleteProduct = async (id: string) => {
+    const index = products.findIndex((product) => product.id.toString() === id);
+    if (index < 0) {
+      toast.error("شناسه محصول نامعتبر است.");
+      return false;
+    }
+
+    try {
+      const result = await DeleteProduct(products[index].id.toString());
+      if (result.status === 200) {
+        const _products = Array.from(products);
+        _products.splice(index, 1);
+        setProducts(_products);
+        toast.success("محصول مورد نظر با موفقیت حذف شد");
+        return true;
+      }
+
+      toast.error("عملیات حذف با خطا مواجه شد.");
+      return false;
+    } catch (error) {
+      toast.error("عملیات حذف با خطا مواجه شد.");
+      return false;
+    }
   };
 
   useEffect(() => {
@@ -248,7 +273,13 @@ const Home: FC = () => {
                     <div>{item.description}</div>
                   </td>
                   <td>
-                    <div></div>
+                    <div>
+                      <span
+                        onClick={() => handleDeleteProduct(item.id.toString())}
+                      >
+                        حذف
+                      </span>
+                    </div>
                   </td>
                 </tr>
               );
