@@ -1,5 +1,5 @@
 import { FC, useCallback, useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   DeleteProduct,
   GetAllCategories,
@@ -128,6 +128,7 @@ const Home: FC = () => {
           </td>
           <td>
             <div>
+              <Link to={`/products/${item.id}`}>مشاهده</Link>
               <span onClick={() => handleDeleteProduct(item.id.toString())}>
                 حذف
               </span>
@@ -136,6 +137,7 @@ const Home: FC = () => {
         </tr>
       );
     });
+    // eslint-disable-next-line
   }, [products, searchResult]);
 
   useEffect(() => {
@@ -166,6 +168,7 @@ const Home: FC = () => {
   }, [searchParams]);
   useEffect(() => {
     handleGetAllProducts(currentPage, itemPerPage);
+    setSearchValue("");
     // eslint-disable-next-line
   }, [currentPage, itemPerPage]);
   useEffect(() => {
