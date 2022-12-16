@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import {
   DeleteProduct,
@@ -23,6 +23,9 @@ const Home: FC = () => {
     key: "id",
     direction: "asc",
   });
+  const [searchKey, setSearchKey] = useState<string>("id");
+  const [searchResult, setSearchResult] = useState<Product[]>([]);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(12);
@@ -43,20 +46,6 @@ const Home: FC = () => {
       }
     } catch (error) {}
   };
-
-  useEffect(() => {
-    const handleGetAllCategories = async () => {
-      try {
-        const result = await GetAllCategories();
-        if (result.status === 200) {
-          setCategories(result.data);
-        }
-      } catch (error) {}
-    };
-
-    handleGetAllCategories();
-  }, []);
-
   const handleSortProducts = (products: Product[]) => {
     const _products: Product[] = Array.from(products);
 
@@ -116,8 +105,51 @@ const Home: FC = () => {
       return false;
     }
   };
+  const handleTableRecords = useCallback(() => {
+    const _products = searchValue ? searchResult : products;
+    return _products.map((item) => {
+      return (
+        <tr key={item.id}>
+          <td>
+            <div>{item.id}</div>
+          </td>
+          <td>
+            <div>{item.title}</div>
+          </td>
+          <td>
+            <div>{item.price}$</div>
+          </td>
+          <td>
+            <div>{item.category}</div>
+          </td>
+          <td>
+            {/* <div>{item.description}</div> */}
+            <div>123</div>
+          </td>
+          <td>
+            <div>
+              <span onClick={() => handleDeleteProduct(item.id.toString())}>
+                حذف
+              </span>
+            </div>
+          </td>
+        </tr>
+      );
+    });
+  }, [products, searchResult]);
 
-  // handleGetAllCategories();
+  useEffect(() => {
+    const handleGetAllCategories = async () => {
+      try {
+        const result = await GetAllCategories();
+        if (result.status === 200) {
+          setCategories(result.data);
+        }
+      } catch (error) {}
+    };
+
+    handleGetAllCategories();
+  }, []);
   useEffect(() => {
     if (searchParams.has("pageId")) {
       const pageId = searchParams.get("pageId");
@@ -132,20 +164,66 @@ const Home: FC = () => {
       }
     }
   }, [searchParams]);
-
   useEffect(() => {
     handleGetAllProducts(currentPage, itemPerPage);
     // eslint-disable-next-line
   }, [currentPage, itemPerPage]);
-
   useEffect(() => {
     handleSortProducts(products);
     // eslint-disable-next-line
   }, [sortState]);
+  useEffect(() => {
+    if (searchKey && searchValue) {
+      let _products = Array.from(products);
+      _products = _products.filter((product) => {
+        switch (searchKey) {
+          case "title": {
+            if (product.title.search(searchValue) > -1) return true;
+            return false;
+          }
+          case "category": {
+            if (product.category.search(searchValue) > -1) return true;
+            return false;
+          }
+          case "id": {
+            if (product.id.toString().search(searchValue) > -1) return true;
+            return false;
+          }
+          case "price": {
+            if (product.price.toString().search(searchValue) > -1) return true;
+            return false;
+          }
+        }
+        return false;
+      });
+
+      setSearchResult(_products);
+    } else {
+      setSearchResult([]);
+    }
+  }, [searchValue, products, searchKey]);
 
   return (
     <div className="home-page">
       <div className="container">
+        <select
+          value={searchKey}
+          onChange={(e) => {
+            setSearchKey(e.target.value);
+          }}
+        >
+          <option value="id">شناسه</option>
+          <option value="category">دسته بندی</option>
+          <option value="title">نام</option>
+          <option value="price">قیمت</option>
+        </select>
+        <input
+          placeholder={`جستجو در ${searchKey} ها`}
+          value={searchValue}
+          onChange={(e) => {
+            setSearchValue(e.target.value);
+          }}
+        />
         <select
           value={itemPerPage}
           onChange={(e) => {
@@ -275,38 +353,7 @@ const Home: FC = () => {
             </tr>
           </thead>
           <tbody>
-            {products.map((item) => {
-              return (
-                <tr key={item.id}>
-                  <td>
-                    <div>{item.id}</div>
-                  </td>
-                  <td>
-                    <div>{item.title}</div>
-                  </td>
-                  <td>
-                    <div>{item.price}$</div>
-                  </td>
-                  <td>
-                    <div>{item.category}</div>
-                  </td>
-                  <td>
-                    {/* <div>{item.description}</div> */}
-                    <div>123</div>
-                  </td>
-                  <td>
-                    <div>
-                      <span
-                        onClick={() => handleDeleteProduct(item.id.toString())}
-                      >
-                        حذف
-                      </span>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-
+            {handleTableRecords()}
             <AddProduct onSuccess={function () {}} categories={categories} />
           </tbody>
         </table>
