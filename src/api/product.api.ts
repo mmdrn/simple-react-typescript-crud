@@ -1,9 +1,10 @@
 import axios from "axios";
-import { DeletedProduct } from "../types/product.type";
-import { GetProductsResponse } from "./types";
+import { GetProductsResponse, DeleteProductResponse, AddProductResponse, AddProduct as AddProductType } from "./types";
 const backendUrl = process.env.REACT_APP_BACKEND_BASE_URL;
 
 const GetAllProducts = async (skip: number, limit: number) => axios.get<GetProductsResponse>(`${backendUrl}products?${skip ? 'skip=' + skip + '&' : ''}${limit ? 'limit=' + limit + '&' : ''}`);
-const DeleteProduct = async (id: string) => axios.delete<DeletedProduct>(`${backendUrl}products/${id}`);
+const DeleteProduct = async (id: string) => axios.delete<DeleteProductResponse>(`${backendUrl}products/${id}`);
+const AddProduct = async (data: AddProductType) => axios.post<AddProductResponse>(`${backendUrl}products/add`, data);
+const GetAllCategories = async () => axios.get(`${backendUrl}products/categories`);
 
-export { GetAllProducts, DeleteProduct }
+export { GetAllProducts, DeleteProduct, AddProduct, GetAllCategories }

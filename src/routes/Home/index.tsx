@@ -1,10 +1,15 @@
 import { FC, useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { DeleteProduct, GetAllProducts } from "../../api/product.api";
+import {
+  DeleteProduct,
+  GetAllCategories,
+  GetAllProducts,
+} from "../../api/product.api";
 import { toast } from "react-toastify";
 import { Product } from "../../types/product.type";
 import Pagination from "../../components/Pagination";
 import "./style.scss";
+import AddProduct from "./AddProduct";
 
 type SortStateType = {
   key: keyof Product;
@@ -13,6 +18,7 @@ type SortStateType = {
 
 const Home: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [sortState, setSortState] = useState<SortStateType>({
     key: "id",
     direction: "asc",
@@ -37,6 +43,20 @@ const Home: FC = () => {
       }
     } catch (error) {}
   };
+
+  useEffect(() => {
+    const handleGetAllCategories = async () => {
+      try {
+        const result = await GetAllCategories();
+        if (result.status === 200) {
+          setCategories(result.data);
+        }
+      } catch (error) {}
+    };
+
+    handleGetAllCategories();
+  }, []);
+
   const handleSortProducts = (products: Product[]) => {
     const _products: Product[] = Array.from(products);
 
@@ -97,6 +117,7 @@ const Home: FC = () => {
     }
   };
 
+  // handleGetAllCategories();
   useEffect(() => {
     if (searchParams.has("pageId")) {
       const pageId = searchParams.get("pageId");
@@ -270,7 +291,8 @@ const Home: FC = () => {
                     <div>{item.category}</div>
                   </td>
                   <td>
-                    <div>{item.description}</div>
+                    {/* <div>{item.description}</div> */}
+                    <div>123</div>
                   </td>
                   <td>
                     <div>
@@ -284,6 +306,8 @@ const Home: FC = () => {
                 </tr>
               );
             })}
+
+            <AddProduct onSuccess={function () {}} categories={categories} />
           </tbody>
         </table>
       </div>
