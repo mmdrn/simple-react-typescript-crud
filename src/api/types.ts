@@ -37,3 +37,9 @@ export type AddProduct = {
     price: number,
     description: string,
 }
+
+export type UpdateProductType = {
+    title: string,
+    price: number,
+    description: string,
+}

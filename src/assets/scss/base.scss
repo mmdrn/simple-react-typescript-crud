@@ -25,6 +25,10 @@ html {
     font-family: "Lato", "Dana";
   }
 
+  .Toastify__toast-body {
+    direction: rtl;
+  }
+
   .container {
     width: 1150px;
     display: flex;
@@ -43,6 +47,11 @@ html {
     font-size: 14px;
     border-radius: 5px;
     width: 100%;
+    border: 2px solid #f1f2f7;
+    transition: all ease 0.3s;
+    &:focus {
+      border-color: rgb(136, 134, 201);
+    }
   }
   .select-list {
     background-image: url("./../../assets/images/chevron.png");
@@ -59,6 +68,7 @@ html {
     border-radius: 5px;
     padding: 0 10px 4px;
     min-width: 90px;
+    display: block;
     cursor: pointer;
     transition: all ease 0.3s;
     text-align: center;

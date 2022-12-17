@@ -120,7 +120,7 @@ const AddProduct: FC<AddProductProps> = (props) => {
         props.onSuccess();
       }
     } catch (error) {
-      toast.error("عملیات ایجاد محصول با خدا مواجه شد.");
+      toast.error("عملیات ایجاد محصول با خطا مواجه شد.");
     }
 
     props.onSuccess();

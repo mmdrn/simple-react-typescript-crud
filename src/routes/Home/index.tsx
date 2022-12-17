@@ -13,7 +13,7 @@ import AddProduct from "./AddProduct";
 
 type SortStateType = {
   key: keyof Product;
-  direction: "asc" | "desc";
+  direction: string;
 };
 type SearchKeyType = {
   key: string;
@@ -51,7 +51,9 @@ const Home: FC = () => {
         handleSortProducts(result.data.products);
         setTotalPages(Math.ceil(result.data.total / itemPerPage));
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error("دریافت محصولات با خطا مواجه شد.");
+    }
   };
   const handleSortProducts = (products: Product[]) => {
     const _products: Product[] = Array.from(products);
@@ -191,7 +193,9 @@ const Home: FC = () => {
         if (result.status === 200) {
           setCategories(result.data);
         }
-      } catch (error) {}
+      } catch (error) {
+        toast.error("دریافت دسته‌بندی‌ها با خطا مواجه شد.");
+      }
     };
 
     handleGetAllCategories();

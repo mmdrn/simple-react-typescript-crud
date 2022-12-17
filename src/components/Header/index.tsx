@@ -8,7 +8,7 @@ const Header: FC = () => {
     <div className="main-header">
       <div className="container">
         <Link className="logo" to="/">
-          <img src={logo} alt="we are eco" /* style={{ opacity: 0 }} */ />
+          <img src={logo} alt="we are eco" style={{ opacity: 0 }} />
         </Link>
         <div className="menu">
           <Link className="item" to="/">
