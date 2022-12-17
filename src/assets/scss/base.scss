@@ -1,5 +1,6 @@
 @import "./fontfaces/lato.scss";
 @import "./fontfaces/dana.scss";
+@import "./mixins.scss";
 
 html {
   font: 16px/25px "Lato", "Dana";
@@ -32,70 +33,63 @@ html {
     margin: 0 auto;
   }
 
-  .button {
-    background-color: #7f56da;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ffffff;
-    height: 54px;
+  .input,
+  .select-list {
+    background: #f1f2f7;
+    width: 200px;
+    height: 45px;
+    padding: 0 10px 4px;
+    line-height: 25px;
+    font-size: 14px;
+    border-radius: 5px;
     width: 100%;
-    font-weight: 500;
-    font-size: 18px;
+  }
+  .select-list {
+    background-image: url("./../../assets/images/chevron.png");
+    background-repeat: no-repeat;
+    background-size: 15px;
+    background-position: 10px center;
+    padding-left: 30px;
+    appearance: none;
     cursor: pointer;
-    transition: background-color ease 0.3s, opacity ease 0.3s;
-    &:hover {
-      background-color: darken(#7f56da, 10);
-    }
+    @include textOverflow(100%);
   }
-}
 
-// breakpoints
-@media screen and (min-width: 320px) and (max-width: 479px) {
-  html {
-    .container {
-      width: 300px;
+  .button {
+    border-radius: 5px;
+    padding: 0 10px 4px;
+    min-width: 90px;
+    cursor: pointer;
+    transition: all ease 0.3s;
+    text-align: center;
+    &.disabled {
+      background-color: #cbcbcb !important;
+      color: #444444 !important;
+      cursor: no-drop;
     }
-  }
-}
-
-@media screen and (min-width: 480px) and (max-width: 599px) {
-  html {
-    .container {
-      width: 460px;
+    &.primary {
+      line-height: 35px;
+      background: #8300cc;
+      color: #fff;
+      &:hover {
+        background-color: lighten(#8300cc, 10);
+      }
     }
-  }
-}
-
-@media screen and (min-width: 600px) and (max-width: 767px) {
-  html {
-    .container {
-      width: 580px;
+    &.danger {
+      line-height: 35px;
+      background: #de2828;
+      color: #fff;
+      &:hover {
+        background-color: lighten(#de2828, 10);
+      }
     }
-  }
-}
-
-@media screen and (min-width: 768px) and (max-width: 899px) {
-  html {
-    .container {
-      width: 740px;
-    }
-  }
-}
-
-@media screen and (min-width: 900px) and (max-width: 1023px) {
-  html {
-    .container {
-      width: 880px;
-    }
-  }
-}
-
-@media screen and (min-width: 1024px) and (max-width: 1199px) {
-  html {
-    .container {
-      width: 1000px;
+    &.success {
+      line-height: 35px;
+      background: #59b300;
+      color: #fff;
+      &:hover {
+        background-color: lighten(#59b300, 10);
+      }
     }
   }
 }

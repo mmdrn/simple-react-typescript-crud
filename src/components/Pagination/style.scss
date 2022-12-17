@@ -1,0 +1,13 @@
+.pagination {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  > * {
+    margin-left: 10px;
+    &:last-child {
+      margin-left: 0;
+    }
+  }
+}

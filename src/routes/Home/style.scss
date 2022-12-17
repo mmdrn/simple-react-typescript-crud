@@ -1,57 +1,134 @@
 @import "./../../assets/scss/mixins.scss";
 
+.options {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  width: 100%;
+  .search-keys,
+  .search-value {
+    width: 200px;
+  }
+  .search-keys {
+    margin-left: 10px;
+  }
+  .item-per-page {
+    margin-left: 0;
+    margin-right: auto;
+  }
+  .item-per-page {
+    width: 130px;
+  }
+}
+
 .table {
   width: 100%;
   border-collapse: collapse;
   tr {
-    border-bottom: 1px solid #f9e6ff;
-    td {
-      border-left: 1px solid #f9e6ff;
-      &:first-child {
-        border-right: 1px solid #f9e6ff;
-      }
+    td,
+    th {
+      overflow: hidden;
       > div {
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
         width: 100%;
+        padding: 10px 10px;
         @include textOverflow(100%);
+        font-size: 14px;
       }
     }
   }
   thead {
-    th {
-      > div {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        min-width: 100px;
-        .order-markers {
+    tr {
+      th,
+      td {
+        background-color: #f1f2f7;
+        border-bottom: 1px solid #f1f2f7;
+        font-weight: 500;
+        border-left: 1px solid #eaeaea;
+        &:last-child {
+          border-left: none;
+        }
+      }
+      &:first-child {
+        th,
+        td {
+          &:first-child {
+            border-radius: 0 5px 0 0;
+          }
+          &:last-child {
+            border-radius: 5px 0 0 0;
+          }
+          > div {
+            flex-wrap: nowrap;
+            &.sortable {
+              cursor: pointer;
+              .order-markers {
+                display: flex;
+                align-items: flex-start;
+                justify-content: flex-start;
+                flex-direction: column;
+                margin-right: 30px;
+                .top {
+                  width: 0;
+                  height: 0;
+                  border-left: 5px solid transparent;
+                  border-right: 5px solid transparent;
+                  border-bottom: 5px solid #444444;
+                  margin-bottom: 5px;
+                  &.active {
+                    border-bottom-color: #e635ff;
+                  }
+                }
+                .bottom {
+                  width: 0;
+                  height: 0;
+                  border-left: 5px solid transparent;
+                  border-right: 5px solid transparent;
+                  border-top: 5px solid #444444;
+                  &.active {
+                    border-top-color: #e635ff;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:nth-child(even):not(:last-child) {
+        background: #f1f2f7;
+        td {
+          border-left: 1px solid #eaeaea;
+          &:last-child {
+            border-left: 0;
+          }
+        }
+      }
+      td {
+        border-bottom: 1px solid #f1f2f7;
+        border-right: 1px solid #f1f2f7;
+        &:last-child {
+          border-left: 1px solid #f1f2f7;
+        }
+        .actions {
           display: flex;
           align-items: flex-start;
           justify-content: flex-start;
-          flex-direction: column;
-          margin-right: 10px;
-          .top {
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-bottom: 5px solid black;
-            margin-bottom: 5px;
-            &.active {
-              border-bottom-color: red;
-            }
-          }
-          .bottom {
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid black;
-            &.active {
-              border-top-color: red;
+          flex-wrap: nowrap;
+          border-radius: 5px;
+          line-height: 30px;
+
+          .button {
+            &.primary {
+              margin-left: 10px;
             }
           }
         }

@@ -1,6 +1,7 @@
 import { FC, useState } from "react";
 import { AddProduct as AddProductRequest } from "../../../api/product.api";
 import { toast } from "react-toastify";
+import "./style.scss";
 
 type AddProductProps = {
   categories: string[];
@@ -45,8 +46,7 @@ const AddProduct: FC<AddProductProps> = (props) => {
 
     updateForm(_form);
   };
-
-  const formValidation = () => {
+  const handleFormValidation = () => {
     let isValid = true;
 
     const _form = Object.assign({}, form);
@@ -67,7 +67,11 @@ const AddProduct: FC<AddProductProps> = (props) => {
     }
 
     // price validation
-    if (_form.price.value.match("^[0-9]*$") === null) {
+    if (!_form.price.value) {
+      isValid = false;
+      const errorMessage = "قیمت نمی‌تواند خالی باشد.";
+      _form.price.errors.push(errorMessage);
+    } else if (_form.price.value.match("^[0-9]*$") === null) {
       isValid = false;
       const errorMessage = "قیمت فقط می‌تواند عدد باشد.";
       _form.price.errors.push(errorMessage);
@@ -89,7 +93,6 @@ const AddProduct: FC<AddProductProps> = (props) => {
 
     return isValid;
   };
-
   const handleResetForm = async () => {
     const _form = Object.assign({}, form);
 
@@ -100,9 +103,8 @@ const AddProduct: FC<AddProductProps> = (props) => {
 
     updateForm(_form);
   };
-
   const handleSubmit = async () => {
-    if (!formValidation()) return false;
+    if (!handleFormValidation()) return false;
 
     try {
       const result = await AddProductRequest({
@@ -123,37 +125,59 @@ const AddProduct: FC<AddProductProps> = (props) => {
 
     props.onSuccess();
   };
+  const handleValidationMessages = (key: string) => {
+    return (
+      <div className="validations">
+        {form[key].errors.map((error: any) => (
+          <p
+            key={error}
+            className="validation-item"
+            dangerouslySetInnerHTML={{ __html: error }}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <tr>
+    <tr className="add-product">
       <td>
-        <div></div>
+        <div>افزودن محصول جدید</div>
       </td>
       <td>
         <div>
           <input
+            className="input"
+            placeholder="نام"
             type="text"
             value={form.name.value}
             onChange={(e) => handleInputChange(e.target.value, "name")}
           />
+          {handleValidationMessages("name")}
         </div>
       </td>
       <td>
         <div>
           <input
+            className="input"
+            placeholder="قیمت (فقط عدد)"
             type="text"
             value={form.price.value}
             onChange={(e) => handleInputChange(e.target.value, "price")}
           />
+          {handleValidationMessages("price")}
         </div>
       </td>
       <td>
         <div>
           <select
+            className="select-list"
+            placeholder="دسته‌بندی"
             value={form.category.value}
             onChange={(e) => handleInputChange(e.target.value, "category")}
           >
             {props.categories.map((item) => {
+              <option value="">انتخاب کنید</option>;
               return (
                 <option value={item} key={item}>
                   {item}
@@ -161,20 +185,26 @@ const AddProduct: FC<AddProductProps> = (props) => {
               );
             })}
           </select>
+          {handleValidationMessages("category")}
         </div>
       </td>
       <td>
         <div>
           <input
+            className="input"
+            placeholder="توضیحات"
             type="text"
             value={form.description.value}
             onChange={(e) => handleInputChange(e.target.value, "description")}
           />
+          {handleValidationMessages("description")}
         </div>
       </td>
       <td>
         <div>
-          <span onClick={handleSubmit}>ثبت</span>
+          <span onClick={handleSubmit} className="button success">
+            ثبت
+          </span>
         </div>
       </td>
     </tr>

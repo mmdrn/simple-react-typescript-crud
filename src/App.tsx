@@ -5,7 +5,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Home from "./routes/Home";
 import NotFound from "./routes/NotFound";
 import Product from "./routes/Product";
-import Products from "./routes/Products";
 import Header from "./components/Header";
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<Product />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

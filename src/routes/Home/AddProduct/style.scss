@@ -1,0 +1,16 @@
+.add-product {
+  .input,
+  .select-list {
+    width: 100%;
+  }
+  .validations {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: right;
+    font-size: 13px;
+    color: red;
+  }
+}

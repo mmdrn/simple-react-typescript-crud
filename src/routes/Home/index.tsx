@@ -15,6 +15,10 @@ type SortStateType = {
   key: keyof Product;
   direction: "asc" | "desc";
 };
+type SearchKeyType = {
+  key: string;
+  title: string;
+};
 
 const Home: FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -23,7 +27,10 @@ const Home: FC = () => {
     key: "id",
     direction: "asc",
   });
-  const [searchKey, setSearchKey] = useState<string>("id");
+  const [searchKey, setSearchKey] = useState<SearchKeyType>({
+    key: "id",
+    title: "نام",
+  });
   const [searchResult, setSearchResult] = useState<Product[]>([]);
   const [searchValue, setSearchValue] = useState<string>("");
   const [searchParams, setSearchParams] = useSearchParams();
@@ -123,13 +130,21 @@ const Home: FC = () => {
             <div>{item.category}</div>
           </td>
           <td>
-            {/* <div>{item.description}</div> */}
-            <div>123</div>
+            <div>
+              {item.description.length > 30
+                ? item.description.substring(0, 30) + "..."
+                : item.description}
+            </div>
           </td>
           <td>
-            <div>
-              <Link to={`/products/${item.id}`}>مشاهده</Link>
-              <span onClick={() => handleDeleteProduct(item.id.toString())}>
+            <div className="actions">
+              <Link to={`/products/${item.id}`} className="button primary">
+                مشاهده
+              </Link>
+              <span
+                className="button danger"
+                onClick={() => handleDeleteProduct(item.id.toString())}
+              >
                 حذف
               </span>
             </div>
@@ -139,6 +154,35 @@ const Home: FC = () => {
     });
     // eslint-disable-next-line
   }, [products, searchResult]);
+  const handleUpdateSearchKey = (key: string) => {
+    switch (key) {
+      case "id":
+        setSearchKey({
+          key: "id",
+          title: "شناسه",
+        });
+        break;
+      case "title":
+        setSearchKey({
+          key: "title",
+          title: "نام",
+        });
+        break;
+      case "category":
+        setSearchKey({
+          key: "category",
+          title: "دسته‌بندی",
+        });
+        break;
+      case "price":
+        setSearchKey({
+          key: "price",
+          title: "قیمت",
+        });
+        break;
+    }
+    return true;
+  };
 
   useEffect(() => {
     const handleGetAllCategories = async () => {
@@ -176,10 +220,10 @@ const Home: FC = () => {
     // eslint-disable-next-line
   }, [sortState]);
   useEffect(() => {
-    if (searchKey && searchValue) {
+    if (searchKey.key && searchValue) {
       let _products = Array.from(products);
       _products = _products.filter((product) => {
-        switch (searchKey) {
+        switch (searchKey.key) {
           case "title": {
             if (product.title.search(searchValue) > -1) return true;
             return false;
@@ -209,35 +253,39 @@ const Home: FC = () => {
   return (
     <div className="home-page">
       <div className="container">
-        <select
-          value={searchKey}
-          onChange={(e) => {
-            setSearchKey(e.target.value);
-          }}
-        >
-          <option value="id">شناسه</option>
-          <option value="category">دسته بندی</option>
-          <option value="title">نام</option>
-          <option value="price">قیمت</option>
-        </select>
-        <input
-          placeholder={`جستجو در ${searchKey} ها`}
-          value={searchValue}
-          onChange={(e) => {
-            setSearchValue(e.target.value);
-          }}
-        />
-        <select
-          value={itemPerPage}
-          onChange={(e) => {
-            handleUpdateItemPerPage(parseInt(e.target.value));
-          }}
-        >
-          <option value="5">5</option>
-          <option value="12">12</option>
-          <option value="30">30</option>
-        </select>
-        <Pagination currentPage={currentPage} pagesCount={totalPages} />
+        <div className="options">
+          <select
+            className="select-list search-keys"
+            value={searchKey.key}
+            onChange={(e) => {
+              handleUpdateSearchKey(e.target.value);
+            }}
+          >
+            <option value="id">شناسه</option>
+            <option value="category">دسته بندی</option>
+            <option value="title">نام</option>
+            <option value="price">قیمت</option>
+          </select>
+          <input
+            className="input search-value"
+            placeholder={`جستجو در ${searchKey.title}‌ها`}
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
+          />
+          <select
+            className="select-list item-per-page"
+            value={itemPerPage}
+            onChange={(e) => {
+              handleUpdateItemPerPage(parseInt(e.target.value));
+            }}
+          >
+            <option value="5">5</option>
+            <option value="12">12</option>
+            <option value="30">30</option>
+          </select>
+        </div>
         <table className="table">
           <thead>
             <tr>
@@ -246,7 +294,7 @@ const Home: FC = () => {
                   handleUpdateSortState("id");
                 }}
               >
-                <div>
+                <div className="sortable">
                   شناسه
                   <span className="order-markers">
                     <span
@@ -271,7 +319,7 @@ const Home: FC = () => {
                   handleUpdateSortState("title");
                 }}
               >
-                <div>
+                <div className="sortable">
                   نام
                   <span className="order-markers">
                     <span
@@ -298,7 +346,7 @@ const Home: FC = () => {
                   handleUpdateSortState("price");
                 }}
               >
-                <div>
+                <div className="sortable">
                   قیمت
                   <span className="order-markers">
                     <span
@@ -325,7 +373,7 @@ const Home: FC = () => {
                   handleUpdateSortState("category");
                 }}
               >
-                <div>
+                <div className="sortable">
                   دسته‌بندی
                   <span className="order-markers">
                     <span
@@ -360,6 +408,7 @@ const Home: FC = () => {
             <AddProduct onSuccess={function () {}} categories={categories} />
           </tbody>
         </table>
+        <Pagination currentPage={currentPage} pagesCount={totalPages} />
       </div>
     </div>
   );
